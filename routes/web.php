@@ -27,6 +27,9 @@ Route::group(['prefix'=>'api'], function(){
     Route::post('category/change-status','API\CategoryController@change_status');
 
     Route::post('product/create','API\ProductController@create');
+    Route::get('product/list','API\ProductController@list');
+    Route::post('product/change-status','API\ProductController@change_status');
+    Route::get('product/visible','API\ProductController@visible');
 });
 
 Route::get('/product', function(){

@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleFormControlInput1">Images</label>
-                                    <input type="file" class="form-control" ref="file" @change="onUploadImage()">
+                                    <input type="file" class="form-control" ref="foto" @change="onUploadImage()">
                                 </div>  
                             </div>
 
@@ -60,6 +60,30 @@
                     </div>
                 </div>
                 
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(data, index) in listProd" :key='index'>
+                            <td>{{ index+1 }}</td>
+                            <td>{{ data.prod_name }}</td>
+                            <td>{{ data.prod_price }}</td>
+                            <td>{{ data.cat_name }}</td>
+                            <td>
+                                <button type="button" class="btn btn-info" v-if="data.prod_visible == 1" @click="updateStatus(data.prod_id, 0)">Active</button>
+                                <button type="button" class="btn btn-light" v-else @click="updateStatus(data.prod_id, 1)">Disabled</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
             </div>
         </div>
     </div>
@@ -69,6 +93,7 @@
 export default {
     data(){
         return {
+            listProd: [],
             listCat : [],
             fieldName : '',
             fieldDescription: '',
@@ -79,6 +104,7 @@ export default {
     },
     mounted(){
         this.listCatService()
+        this.listProdService()
     },
     methods: {
         listCatService(){
@@ -97,7 +123,7 @@ export default {
         },
 
         onUploadImage(){
-            this.picFile = this.$refs.file.files[0];
+            this.picFile = this.$refs.foto.files[0];
         },
 
         sendNetwordCreateProduct(){
@@ -131,6 +157,32 @@ export default {
                     alert(error)
                 })
             }
+        },
+
+        listProdService(){
+            axios.get('api/product/list')
+            .then(response => {
+                //load data
+                this.listProd = response.data
+            })
+            .catch(error => {
+                alert(error)
+            })
+        },
+
+        updateStatus(id, status){
+            const formData = new FormData()
+            formData.append('idprod',id)
+            formData.append('status',status)
+
+            axios.post('api/product/change-status', formData)
+            .then(response => {
+                //load list again
+                this.listProdService()
+            })
+            .catch(error => {
+                alert(error)
+            })
         }
     }
 }

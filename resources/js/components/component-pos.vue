@@ -44,13 +44,16 @@
             </div>
             <div class="col-md-8 order-md-1">
                 <h4 class="mb-3">Food And Drink</h4>
-                <button type="button" class="btn btn-light" v-for="(cat,index) in listCat" :key="index">{{ cat.cat_name }}</button>
-                <div class="card" style="width: 18rem;">
-                    <img class="card-img-top" src="https://irecetasfaciles.com/wp-content/uploads/2018/05/Hamburguesa-cl%C3%A1sica-estilo-Whopper-de-Burger-King.jpg" alt="Card image cap">
-                    <div class="card-body">
-                        <h5 class="card-title">Card Title</h5>
-                        <p class="card-text">Example text content</p>
-                    <a href="#" class="btn btn-primary">Go Somewhere</a>
+                <button type="button" class="btn btn-light" v-for="(cat,index) in listCat" :key="index" @click="selectCategory=cat.cat_id">{{ cat.cat_name }}</button>
+                <hr>
+                <div class="row">
+                    <div class="card col-md-4" v-show="prod.prod_category == selectCategory || selectCategory == 0" style="padding: 0px;" v-for="(prod, index) in listProd" :key="index">
+                        <img class="card-img-top" :src="prod.prod_image" alt="Card image cap">
+                        <div class="card-body">
+                                <h5 class="card-title">{{ prod.prod_name }}</h5>
+                                <p class="card-text">{{ prod.prod_description }}</p>
+                            <a href="#" class="btn btn-primary">{{ prod.prod_price }}</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -62,11 +65,14 @@
 export default {
     data(){
         return{
-            listCat: []
+            listProd: [],
+            listCat: [],
+            selectCategory: 0
         }
     },
     mounted(){
         this.listCatService()
+        this.listProdService()
     },
     methods: {
         listCatService(){
@@ -74,6 +80,16 @@ export default {
             .then(response => {
                 //load data
                 this.listCat = response.data
+            })
+            .catch(error => {
+                alert(error)
+            })
+        },
+        listProdService(){
+            axios.get('api/product/visible')
+            .then(response => {
+                //load daata
+                this.listProd = response.data
             })
             .catch(error => {
                 alert(error)

@@ -36,4 +36,45 @@ class ProductController extends Controller
         $response['success'] = true;
         return $response;
     }
+
+    public function list()
+    {
+        $data = MProduct::where('prod_delete',0)
+                            ->join('category','category.cat_id', '=', 'products.prod_category')
+                            ->get();
+
+        return $data;
+    }
+
+    public function change_status(Request $request)
+    {
+        $idprod = $request->input('idprod');
+        $status = $request->input('status');
+
+        Log::info('Updating status $idprod => $status');
+
+        MProduct::where('prod_id', $idprod)->update([
+            'prod_visible' => $status
+        ]);
+
+        $response['message'] = "Update Successfully";
+        $response['success'] = true;
+
+        return $response;
+    }
+
+    public function visible()
+    {
+        $data = MProduct::where('prod_delete', 0)
+                            ->where('prod_visible', 1)
+                            ->join('category', 'category.cat_id', '=', 'products.prod_category')
+                            ->where('cat_active', 1)
+                            ->get();
+
+                foreach($data as $value){
+                    $value['prod_image'] = asset('storage/'.$value->prod_image);
+                }
+
+        return $data;
+    }
 }

@@ -1999,14 +1999,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      listCat: []
+      listProd: [],
+      listCat: [],
+      selectCategory: 0
     };
   },
   mounted: function mounted() {
     this.listCatService();
+    this.listProdService();
   },
   methods: {
     listCatService: function listCatService() {
@@ -2015,6 +2021,16 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('api/category/available').then(function (response) {
         //load data
         _this.listCat = response.data;
+      })["catch"](function (error) {
+        alert(error);
+      });
+    },
+    listProdService: function listProdService() {
+      var _this2 = this;
+
+      axios.get('api/product/visible').then(function (response) {
+        //load daata
+        _this2.listProd = response.data;
       })["catch"](function (error) {
         alert(error);
       });
@@ -2100,9 +2116,34 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      listProd: [],
       listCat: [],
       fieldName: '',
       fieldDescription: '',
@@ -2113,6 +2154,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.listCatService();
+    this.listProdService();
   },
   methods: {
     listCatService: function listCatService() {
@@ -2129,7 +2171,7 @@ __webpack_require__.r(__webpack_exports__);
       this.fieldCategory = event.target.value;
     },
     onUploadImage: function onUploadImage() {
-      this.picFile = this.$refs.file.files[0];
+      this.picFile = this.$refs.foto.files[0];
     },
     sendNetwordCreateProduct: function sendNetwordCreateProduct() {
       if (this.fieldName == "") {
@@ -2156,6 +2198,29 @@ __webpack_require__.r(__webpack_exports__);
           alert(error);
         });
       }
+    },
+    listProdService: function listProdService() {
+      var _this2 = this;
+
+      axios.get('api/product/list').then(function (response) {
+        //load data
+        _this2.listProd = response.data;
+      })["catch"](function (error) {
+        alert(error);
+      });
+    },
+    updateStatus: function updateStatus(id, status) {
+      var _this3 = this;
+
+      var formData = new FormData();
+      formData.append('idprod', id);
+      formData.append('status', status);
+      axios.post('api/product/change-status', formData).then(function (response) {
+        //load list again
+        _this3.listProdService();
+      })["catch"](function (error) {
+        alert(error);
+      });
     }
   }
 });
@@ -19981,13 +20046,67 @@ var render = function() {
               {
                 key: index,
                 staticClass: "btn btn-light",
-                attrs: { type: "button" }
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    _vm.selectCategory = cat.cat_id
+                  }
+                }
               },
               [_vm._v(_vm._s(cat.cat_name))]
             )
           }),
           _vm._v(" "),
-          _vm._m(1)
+          _c("hr"),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "row" },
+            _vm._l(_vm.listProd, function(prod, index) {
+              return _c(
+                "div",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value:
+                        prod.prod_category == _vm.selectCategory ||
+                        _vm.selectCategory == 0,
+                      expression:
+                        "prod.prod_category == selectCategory || selectCategory == 0"
+                    }
+                  ],
+                  key: index,
+                  staticClass: "card col-md-4",
+                  staticStyle: { padding: "0px" }
+                },
+                [
+                  _c("img", {
+                    staticClass: "card-img-top",
+                    attrs: { src: prod.prod_image, alt: "Card image cap" }
+                  }),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "card-body" }, [
+                    _c("h5", { staticClass: "card-title" }, [
+                      _vm._v(_vm._s(prod.prod_name))
+                    ]),
+                    _vm._v(" "),
+                    _c("p", { staticClass: "card-text" }, [
+                      _vm._v(_vm._s(prod.prod_description))
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "a",
+                      { staticClass: "btn btn-primary", attrs: { href: "#" } },
+                      [_vm._v(_vm._s(prod.prod_price))]
+                    )
+                  ])
+                ]
+              )
+            }),
+            0
+          )
         ],
         2
       )
@@ -20098,31 +20217,6 @@ var staticRenderFns = [
             _c("strong", [_vm._v("$20")])
           ]
         )
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card", staticStyle: { width: "18rem" } }, [
-      _c("img", {
-        staticClass: "card-img-top",
-        attrs: {
-          src:
-            "https://irecetasfaciles.com/wp-content/uploads/2018/05/Hamburguesa-cl%C3%A1sica-estilo-Whopper-de-Burger-King.jpg",
-          alt: "Card image cap"
-        }
-      }),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-body" }, [
-        _c("h5", { staticClass: "card-title" }, [_vm._v("Card Title")]),
-        _vm._v(" "),
-        _c("p", { staticClass: "card-text" }, [_vm._v("Example text content")]),
-        _vm._v(" "),
-        _c("a", { staticClass: "btn btn-primary", attrs: { href: "#" } }, [
-          _vm._v("Go Somewhere")
-        ])
       ])
     ])
   }
@@ -20322,7 +20416,7 @@ var render = function() {
                       ),
                       _vm._v(" "),
                       _c("input", {
-                        ref: "file",
+                        ref: "foto",
                         staticClass: "form-control",
                         attrs: { type: "file" },
                         on: {
@@ -20362,7 +20456,57 @@ var render = function() {
               ]
             )
           ]
-        )
+        ),
+        _vm._v(" "),
+        _c("table", { staticClass: "table table-striped" }, [
+          _vm._m(3),
+          _vm._v(" "),
+          _c(
+            "tbody",
+            _vm._l(_vm.listProd, function(data, index) {
+              return _c("tr", { key: index }, [
+                _c("td", [_vm._v(_vm._s(index + 1))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(data.prod_name))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(data.prod_price))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(data.cat_name))]),
+                _vm._v(" "),
+                _c("td", [
+                  data.prod_visible == 1
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-info",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.updateStatus(data.prod_id, 0)
+                            }
+                          }
+                        },
+                        [_vm._v("Active")]
+                      )
+                    : _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-light",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.updateStatus(data.prod_id, 1)
+                            }
+                          }
+                        },
+                        [_vm._v("Disabled")]
+                      )
+                ])
+              ])
+            }),
+            0
+          )
+        ])
       ])
     ])
   ])
@@ -20407,6 +20551,24 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "input-group-append" }, [
       _c("span", { staticClass: "input-group-text" }, [_vm._v(".00")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("#")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Product")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Price")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Category")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Actions")])
+      ])
     ])
   }
 ]
