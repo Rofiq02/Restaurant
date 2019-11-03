@@ -4,41 +4,38 @@
         <div class="row">
             <div class="col-md-4 order-md-2 md-4">
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-muted">Your Cart</span>
-                    <span class="badge badge-secondary badge-pill">3</span>
+                    <span class="text-muted">Trolley</span>
+                    <span class="badge badge-secondary badge-pill">{{ listTrolley.length }}</span>
                 </h4>
                 <ul class="list-group mb-3">
                     <li class="list-group-item d-flex justify-content-between lh-condensed">
                         <div>
-                            <h6 class="my-0">Product Name</h6>
-                            <small class="text-muted">Brief description</small>
+                            <h6 class="my-0">Product</h6>
+                            <small class="text-muted"></small>
                         </div>
-                        <span class="text-muted">$12</span>
+                        <span class="text-muted">{{ listTrolley.length }}</span>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                    <li v-for="(itemCart, i) in listTrolley" :key="i" class="list-group-item d-flex justify-content-between lh-condensed">
                         <div>
-                            <h6 class="my-0">Second product</h6>
-                            <small class="text-muted">Brief description</small>
+                            <h6 class="my-0">{{ itemCart.name }}</h6>
+                            <small class="text-muted">={{ itemCart.category }}</small>
                         </div>
-                        <span class="text-muted">$8</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+
                         <div>
-                            <h6 class="my-0">Third item</h6>
-                            <small class="text-muted">Brief description</small>
+                            <div>
+                                <i class="material-icons" @click="changeQty(i,false)">remove_circle_outline</i>
+                                    <span class="text-muted">{{ itemCart.cant }}</span>
+                                <i class="material-icons" @click="changeQty(i, true)">add_circle_outline</i>
+                            </div>
+                            <span class="text-muted">{{ convertMoney(itemCart.cant * itemCart.price) }}</span>
                         </div>
-                        <span class="text-muted">$5</span>
+
+                        <i class="material-icons" @click="deleteItem(i)">delete</i>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between bg-light">
-                        <div class="text-success">
-                            <h6 class="my-0">Promo Code</h6>
-                            <small>Exmaple Code</small>
-                        </div>
-                        <span class="text-success">-$5</span>
-                    </li>
+
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Total (USD)</span>
-                        <strong>$20</strong>
+                        <strong>{{ onViewTotal() }}</strong>
                     </li>
                 </ul>
             </div>
@@ -52,7 +49,7 @@
                         <div class="card-body">
                                 <h5 class="card-title">{{ prod.prod_name }}</h5>
                                 <p class="card-text">{{ prod.prod_description }}</p>
-                            <a href="#" class="btn btn-primary">{{ prod.prod_price }}</a>
+                            <a href="#" class="btn btn-primary" @click="addCart(prod)">{{ convertMoney(prod.prod_price) }}</a>
                         </div>
                     </div>
                 </div>
@@ -65,6 +62,7 @@
 export default {
     data(){
         return{
+            listTrolley: [],
             listProd: [],
             listCat: [],
             selectCategory: 0
@@ -94,7 +92,65 @@ export default {
             .catch(error => {
                 alert(error)
             })
+        },
+        convertMoney(value){
+            const formatterUSD = new Intl.NumberFormat('es-CO',{
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            })
+            let valueFinal = formatterUSD.format(value);
+
+            return valueFinal
+        },
+
+        addCart(item){
+            const itemCart = {
+                id : item.prod_id,
+                name : item.prod_name,
+                category: item.cat_name,
+                cant: 1,
+                price: item.prod_price
+            }
+
+            this.listTrolley.push(itemCart)
+        },
+        deleteItem(i){
+            this.listTrolley.splice(i, 1)
+        },
+        changeQty(i, type){
+            //take out cart
+            const dataCart = this.listTrolley
+
+            //take out amount of product
+            let cantd = dataCart[i].cant;
+
+            if(type){
+                cantd += 1
+            }
+            else if(type == false && cantd>= 1){
+                cantd -= 1
+            }
+
+            if((type == false && cantd>1) || type){
+                dataCart[i].cant = cantd
+                this.listTrolley
+            }
+        },
+        onViewTotal(){
+            let total = 0
+            this.listTrolley.map((data) => {
+                total = total + (data.cant * data.price)
+            })
+
+            return this.convertMoney(total)
         }
     }
 }
 </script>
+
+<style scoped>
+    i.material-icons{
+        cursor: pointer;
+    }
+</style>

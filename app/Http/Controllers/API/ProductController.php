@@ -39,11 +39,11 @@ class ProductController extends Controller
 
     public function list()
     {
-        $data = MProduct::where('prod_delete',0)
+        $list = MProduct::where('prod_delete',0)
                             ->join('category','category.cat_id', '=', 'products.prod_category')
                             ->get();
 
-        return $data;
+        return $list;
     }
 
     public function change_status(Request $request)
