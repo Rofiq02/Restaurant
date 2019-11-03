@@ -44,12 +44,13 @@
             </div>
             <div class="col-md-8 order-md-1">
                 <h4 class="mb-3">Food And Drink</h4>
+                <button type="button" class="btn btn-light" v-for="(cat,index) in listCat" :key="index">{{ cat.cat_name }}</button>
                 <div class="card" style="width: 18rem;">
                     <img class="card-img-top" src="https://irecetasfaciles.com/wp-content/uploads/2018/05/Hamburguesa-cl%C3%A1sica-estilo-Whopper-de-Burger-King.jpg" alt="Card image cap">
                     <div class="card-body">
                         <h5 class="card-title">Card Title</h5>
                         <p class="card-text">Example text content</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <a href="#" class="btn btn-primary">Go Somewhere</a>
                     </div>
                 </div>
             </div>
@@ -59,8 +60,25 @@
 
 <script>
 export default {
+    data(){
+        return{
+            listCat: []
+        }
+    },
     mounted(){
-        console.log('Component Main mounted')
+        this.listCatService()
+    },
+    methods: {
+        listCatService(){
+            axios.get('api/category/available')
+            .then(response => {
+                //load data
+                this.listCat = response.data
+            })
+            .catch(error => {
+                alert(error)
+            })
+        }
     }
 }
 </script>

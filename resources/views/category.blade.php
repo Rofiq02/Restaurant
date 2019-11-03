@@ -9,7 +9,7 @@
 
     <body>
         <div id="ar">
-            <component-header-post />
+            <atas></atas>
             <component-category />
         </div>
 

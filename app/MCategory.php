@@ -9,5 +9,5 @@ class MCategory extends Model
     protected $table = "category";
     protected $fillable = ['cat_id','cat_name','cat_active','cat_delete'];
 
-    public $timestamp = false;
+    public $timestamps = false;
 }
