@@ -25,4 +25,10 @@ Route::group(['prefix'=>'api'], function(){
     Route::get('category/list','API\CategoryController@list');
     Route::get('category/available','API\CategoryController@available');
     Route::post('category/change-status','API\CategoryController@change_status');
+
+    Route::post('product/create','API\ProductController@create');
+});
+
+Route::get('/product', function(){
+    return view('product');
 });
