@@ -30,6 +30,8 @@ Route::group(['prefix'=>'api'], function(){
     Route::get('product/list','API\ProductController@list');
     Route::post('product/change-status','API\ProductController@change_status');
     Route::get('product/visible','API\ProductController@visible');
+
+    Route::post('order/create','API\OrderController@create_order');
 });
 
 Route::get('/product', function(){

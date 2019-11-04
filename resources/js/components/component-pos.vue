@@ -37,7 +37,20 @@
                         <span>Total (USD)</span>
                         <strong>{{ onViewTotal() }}</strong>
                     </li>
+
+                    <li class="list-group-item d-flex justify-content-between">
+                        <select class="form-control" id="exampleFormControlSelect1" v-model="SelectMesa">
+                            <option value="1">Mesa 1</option>
+                            <option value="2">Mesa 2</option>
+                            <option value="3">Mesa 3</option>
+                            <option value="4">Mesa 4</option>
+                            <option value="5">Mesa 5</option>
+                        </select>   
+                    </li>
                 </ul>
+                
+                <button type="button" class="btn btn-success btn-lg btn-block" @click="onSendOrder()">Process Order</button>
+
             </div>
             <div class="col-md-8 order-md-1">
                 <h4 class="mb-3">Food And Drink</h4>
@@ -65,7 +78,8 @@ export default {
             listTrolley: [],
             listProd: [],
             listCat: [],
-            selectCategory: 0
+            selectCategory: 0,
+            SelectMesa: 1
         }
     },
     mounted(){
@@ -132,7 +146,7 @@ export default {
                 cantd -= 1
             }
 
-            if((type == false && cantd>1) || type){
+            if((type == false && cantd >= 1) || type){
                 dataCart[i].cant = cantd
                 this.listTrolley
             }
@@ -144,6 +158,36 @@ export default {
             })
 
             return this.convertMoney(total)
+        },
+        onSendOrder(){
+            if(this.listTrolley.length >= 1){
+                //add total product
+                let total = 0
+                this.listTrolley.map((data) => {
+                    total = total + (data.cant * data.price)
+                })
+
+                const formData = new FormData()
+                formData.append('requests',JSON.stringify(this.listTrolley))
+                formData.append('mesa',this.SelectMesa)
+                formData.append('total', total)
+
+                axios.post('api/order/create', formData)
+                .then(response => {
+                    //clear field
+
+                    this.$swal.fire(
+                        'Sent successfully!',
+                        'Shipped successfully ordered',
+                        'success'
+                    )
+
+                    this.listTrolley = []
+                })
+                .catch(error => {
+                    alert(error)
+                })
+            }
         }
     }
 }
@@ -154,3 +198,4 @@ export default {
         cursor: pointer;
     }
 </style>
+
