@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class MOrder extends Model
 {
     protected $table = "order";
+    protected $dates = [
+        'ord_date'
+    ];
 
     protected $fillable = [
         'ord_id',

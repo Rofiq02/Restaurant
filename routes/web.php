@@ -32,8 +32,14 @@ Route::group(['prefix'=>'api'], function(){
     Route::get('product/visible','API\ProductController@visible');
 
     Route::post('order/create','API\OrderController@create_order');
+
+    Route::get('order/list','API\OrderController@list_order');
 });
 
 Route::get('/product', function(){
     return view('product');
+});
+
+Route::get('/order', function(){
+    return view('order');
 });
